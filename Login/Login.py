@@ -2,6 +2,7 @@ import kivy
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.uix.screenmanager import Screen, ScreenManager
+from kivy.uix.textinput import TextInput
 
 kivy.require("2.0.0")
 
@@ -21,9 +22,15 @@ Builder.load_string("""
         Label:
             text: "Enter Username"
         TextInput:
+            hint_text: "Enter Username Here"
+            multiline: False
+            on_text_validate: print(self.text)
         Label:
             text: "Enter Password"
         TextInput:
+            hint_text: "Enter Password Here"
+            multiline: False
+            on_text_validate: print(self.text)
         Button:
             text: "Return To Home Screen"
             on_press: root.manager.current = "Home"
@@ -36,9 +43,15 @@ Builder.load_string("""
         Label:
             text: "Register Username"
         TextInput:
+            hint_text: "Enter Username Here"
+            multiline: False
+            on_text_validate: print(self.text)
         Label:
             text: "Register Password"
         TextInput:
+            hint_text: "Enter Password Here"
+            multiline: False
+            on_text_validate: print(self.text)
         Button:
             text: "Return To Home Screen"
             on_press: root.manager.current = "Home"
