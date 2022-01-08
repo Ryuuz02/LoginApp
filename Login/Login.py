@@ -6,6 +6,7 @@ from kivy.uix.textinput import TextInput
 
 kivy.require("2.0.0")
 
+
 Builder.load_string("""
 <HomeScreen>:
     GridLayout:
@@ -45,13 +46,13 @@ Builder.load_string("""
         TextInput:
             hint_text: "Enter Username Here"
             multiline: False
-            on_text_validate: print(self.text)
+            on_text_validate: root.add_username(self.text)
         Label:
             text: "Register Password"
         TextInput:
             hint_text: "Enter Password Here"
             multiline: False
-            on_text_validate: print(self.text)
+            on_text_validate: root.add_password(self.text)
         Button:
             text: "Return To Home Screen"
             on_press: root.manager.current = "Home"
@@ -67,11 +68,18 @@ class HomeScreen(Screen):
 
 
 class LoginScreen(Screen):
-    pass
+    def find_username(self, obj):
+        pass
 
 
 class RegisterScreen(Screen):
-    pass
+    def add_username(self, obj):
+        with open("login_info.txt", "a+") as f:
+            f.write("username: " + obj + "\n")
+
+    def add_password(self, obj):
+        with open("login_info.txt", "a") as f:
+            f.write("password: " + obj + "\n")
 
 
 class LoginApp(App):
