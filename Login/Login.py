@@ -1,10 +1,7 @@
-from time import sleep
-
 import kivy
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.uix.screenmanager import Screen, ScreenManager
-from kivy.uix.textinput import TextInput
 
 kivy.require("2.0.0")
 
