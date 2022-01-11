@@ -57,17 +57,29 @@ Builder.load_string("""
         Button:
             text: "Login Here"
             on_press: root.manager.current = "Login"
+<LoggedInScreen>:
+    Label:
+        text: "Congratulations"
 
 """)
 
 
 def search_file(searched_text, login_type):
+    spot = find_position(searched_text, login_type)
+    if spot == -1:
+        return False
+    else:
+        return True
+
+
+def find_position(searched_text, login_type):
     with open("login_info.txt", "r") as f:
         with open("login_info.txt", "r") as g:
             file_length = len(g.read())
             g.seek(0)
             file_length += (len(g.readlines()) - 1)
         found = False
+        i = 0
         while not found:
             next_line = f.readline()
             if next_line[0:8] == login_type:
@@ -75,8 +87,11 @@ def search_file(searched_text, login_type):
                 if searched_text.lower() == iterated_name.lower():
                     found = True
             if f.tell() == file_length:
+                i = -1
                 break
-    return found
+            if not found:
+                i += 1
+        return i
 
 
 class HomeScreen(Screen):
@@ -84,37 +99,62 @@ class HomeScreen(Screen):
 
 
 class LoginScreen(Screen):
+    def __init__(self, name):
+        super(LoginScreen, self).__init__(name=name)
+        self.username_position = -1
+        self.logged_password = False
+
     def find_username(self, obj):
         found = search_file(obj, "username")
         if found:
             print("Found your Username")
+            self.username_position = find_position(obj, "username")
         else:
             print("Invalid Username")
 
     def find_password(self, obj):
-        found = search_file(obj, "password")
-        if found:
-            print("Found your Password")
+        if self.username_position == -1:
+            print("Please put in a username first")
         else:
-            print("Invalid Password")
+            with open("login_info.txt", "r") as f:
+                str_lst = f.readlines()
+                password = str_lst[self.username_position + 1]
+                if (self.username_position + 2) == len(str_lst):
+                    if obj == password[9:len(password)]:
+                        print("Found Password")
+                        self.logged_password = True
+                        self.parent.current = "Logged"
+                    else:
+                        print("Incorrect Password")
+                elif obj == password[9:len(password) - 1]:
+                    print("Found Password")
+                    self.logged_password = True
+                    self.parent.current = "Logged"
+                else:
+                    print("Incorrect Password")
 
 
 class RegisterScreen(Screen):
     def add_username(self, obj):
-        found = search_file(obj, "username")
-        if not found:
-            with open("login_info.txt", "a+") as f:
-                f.write("\nusername:" + obj)
-        else:
-            print("That username is already in use")
+        with open("login_info.txt", "a+") as f:
+            f.seek(0)
+            if len(f.read()) == 0:
+                f.write("username:" + obj)
+            else:
+                f.seek(0)
+                found = search_file(obj, "username")
+                if not found:
+                    f.write("\nusername:" + obj)
+                else:
+                    print("That username is already in use")
 
     def add_password(self, obj):
-        found = search_file(obj, "password")
-        if not found:
-            with open("login_info.txt", "a+") as f:
-                f.write("\npassword:" + obj)
-        else:
-            print("That username is already in use")
+        with open("login_info.txt", "a+") as f:
+            f.write("\npassword:" + obj)
+
+
+class LoggedInScreen(Screen):
+    pass
 
 
 class LoginApp(App):
@@ -123,6 +163,7 @@ class LoginApp(App):
         sm.add_widget(HomeScreen(name="Home"))
         sm.add_widget(LoginScreen(name="Login"))
         sm.add_widget(RegisterScreen(name="Register"))
+        sm.add_widget(LoggedInScreen(name="Logged"))
         return sm
 
 
