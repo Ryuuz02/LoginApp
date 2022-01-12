@@ -58,8 +58,13 @@ Builder.load_string("""
             text: "Login Here"
             on_press: root.manager.current = "Login"
 <LoggedInScreen>:
-    Label:
-        text: "Congratulations"
+    GridLayout:
+        cols: 2
+        Label:
+            text: "Congratulations, You've Logged In"
+        Button:
+            text: "Logout"
+            on_press: root.manager.current = "Home"
 
 """)
 
